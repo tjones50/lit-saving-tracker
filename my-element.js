@@ -1,10 +1,12 @@
+import { SavingsGoal } from './src/savings-goal';
+
 /**
  * @license
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import {LitElement, html, css} from 'lit';
+import { LitElement, html, css } from 'lit';
 
 /**
  * An example element.
@@ -22,54 +24,59 @@ export class MyElement extends LitElement {
         padding: 16px;
         max-width: 800px;
       }
+
+      .savings-goal {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px;
+        width: 300px;
+        font-family: Arial, sans-serif;
+    }
+
+    .status.active {
+      color: green;
+    }
+
+    .status.inactive {
+      color: red;
+    }
     `;
   }
 
   static get properties() {
     return {
-      /**
-       * The name to say "Hello" to.
-       * @type {string}
-       */
-      name: {type: String},
-
-      /**
-       * The number of times the button has been clicked.
-       * @type {number}
-       */
-      count: {type: Number},
+      goals: {
+        type: Array,
+      }
     };
   }
 
   constructor() {
     super();
-    this.name = 'World';
-    this.count = 0;
+    this.goals = [];
+    this.goals.push(new SavingsGoal("Basement", new Date("9/30/2023"), 8500))
   }
 
   render() {
     return html`
-      <h1>${this.sayHello(this.name)}!</h1>
-      <button @click=${this._onClick} part="button">
-        Click Count: ${this.count}
-      </button>
-      <slot></slot>
+      <h1>Savings Tracker</h1>
+      <div>${this.goals.map(goal => this._showGoal(goal))}</div>
     `;
   }
 
-  _onClick() {
-    this.count++;
-    this.dispatchEvent(new CustomEvent('count-changed'));
+  _showGoal(goal) {
+    return html`
+    <div class="savings-goal">
+      <h2>${goal.title}</h2>
+      <p class="status ${goal.active ? 'active' : 'inactive'}">Status: ${goal.active ? 'Active' : 'Inactive'}</p>
+      <p>Deadline: ${goal.deadline.toDateString()}</p>
+      <p>Goal: $${goal.goal}</p>
+      <p>Spent: $${goal.spent}</p>
+      <p>Balance: $${goal.balance}</p>
+    </div>
+    `
   }
 
-  /**
-   * Formats a greeting
-   * @param name {string} The name to say "Hello" to
-   * @returns {string} A greeting directed at `name`
-   */
-  sayHello(name) {
-    return `Hello, ${name}`;
-  }
 }
 
 window.customElements.define('my-element', MyElement);
